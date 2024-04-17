@@ -1,5 +1,16 @@
-def say_hello(user_name="anonymous"):
-    # default value 주기. 진짜.. 졸라 쉽네.. 
-    print("Hello", user_name)
-say_hello("nico")
-say_hello()
+def plus(a="write a number,", b=" write a number"):
+    print(a + b)
+def minus(a="write a number,", b=" write a number"):
+    print(a - b)
+def multiplication(a="write a number,", b=" write a number"):
+    print(a * b)
+def division(a="write a number,", b=" write a number"):
+    print(a / b)
+def power_of(a="write a number,", b=" write a number"):
+    print(a ** b)
+
+plus()
+minus()
+multiplication()
+division()
+power_of()
