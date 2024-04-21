@@ -1,21 +1,22 @@
-# calculator
+import requests
 
-playing = True
+movie_ids = [
+    238, 680, 550, 185, 641, 515042, 152532, 120467, 872585, 906126, 840430
+]
 
-while playing:
-  first_number = int(input("Choose a number:\n"))
-  second_number = int(input("Choose another one:\n"))
 
-#string 내에서 탭 하는 거 알고 싶어. 
-  operation = input("Choose an operation:\n    Options are: +, -, * or /.\n    Write 'exit' to finish.\n")
-  if operation == "+":
-    print("Result:", first_number + second_number)
-  elif operation == "-":
-    print("Result:",first_number - second_number)
-  elif operation == "*":
-    print("Result:",first_number * second_number)
-  elif operation == "/":
-    print("Result:",first_number / second_number)
-  elif operation == "exit":
-    playing = False
-    print("See you :)")
+
+for movie_id in movie_ids:
+    url = f"https://nomad-movies.nomadcoders.workers.dev/movies/{movie_id}"
+    response = requests.get(url)
+    data = response.json()
+    if response.status_code == 200:
+      title = data.get('title')
+      overview = data.get('overview')
+      vote_average =  str(data.get('vote_average'))
+      print("Title: " + title, "\nOverview: " + overview , "\nVote average: " + vote_average +"\n")
+    else:
+      print(f"Failed to fetch movie with ID {movie_id}")
+ 
+    # response = requests.get(movie_ids)
+    
