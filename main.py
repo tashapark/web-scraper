@@ -1,23 +1,24 @@
 class Puppy:
-# method는 펑션 안에 있는 class
-# class 안에 method를 가질 경우, 첫 번째 argument는 자동으로 self임.
-# self 이외에 계속 업데이트 될 변수를 파라미터로 넣어줌. 
+# 데이터 설정 setting하고. 파라미터 꼭 넣어주기.
     def __init__(self, name, breed):
         self.name = name
         self.age = 0.1
         self.breed = breed
+#데이터 접근 access 가능 --> 프로퍼티 커스터 마이징 가능
+    def __str__(self):
+        return f"{self.breed} puppy named {self.name}"
 
-# self가 곧 루푸스임. 첫번째 argument라서 
-# but, 밑에다가 bibi = Puppy()를 만들어도 출력은 계속 ruffus로 나옴
-# 위에서 넣어준 파라미터 값을 함수에 추가 해주면 됨. 
-# 위치 argument 사용 중임. 
+# ruffus, bibi는 puppy의 blueprint를 활용해서 만들어진 object로 instance임
 ruffus = Puppy(
-    "Ruffus", 
-    "Beagle"
+    name="Ruffus", 
+    breed="Beagle"
     )
 bibi = Puppy(
-    "Bibi", 
-    "Dalmatian"
+    name="Bibi", 
+    breed="Dalmatian"
     )
+# 하나씩 출력하는 게 아니라, 
+# 전체를 출력하고 위에서 콘솔에 어떻게 보일지 property를 커스터 마이징 가능함 
 
-print(ruffus.name, bibi.name)
+print(bibi,
+      ruffus,)
