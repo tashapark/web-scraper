@@ -51,13 +51,16 @@ for job in jobs:
   # url = None
   # if url:
   #   url = url["href"]
-  url = job.find("a")["href"]
+  # []을 쓰면 해당 값을 가져옴.
+  # anchor가 겹쳐서 뒤에것 달라고 한 것.
+  url = job.find("div", class_="tooltip--flag-logo").next_sibling["href"]
 
   job_data = {
       "title": title,
       "company": company,
       "position": position,
       "region": region,
+      "url": f"https://weworkremotely.com{url}",
   }
   all_jobs.append(job_data)
 
