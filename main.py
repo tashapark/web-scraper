@@ -32,11 +32,21 @@ for job in jobs:
   title = job.find("span", class_="title").text
   # .company가 3개가 있어서 처음부터 이름을 주고 시작.
   # 만약에 목록에서,, 없는 리스트가 있으면, 에러가 뜸.
-  # none으로 나오게 바꿔줘야 함... 안 되고 에러 뜸.. 
-  company, position, region = job.find_all("span", class_="company") 
-  company = company.text if company else None
-  position = position.text if position else None
-  region = region.text if region else None
+  # none으로 나오게 바꿔줘야 함... 안 되고 에러 뜸.. 결국 try-except 사용..
+  try:
+    company = job.find("span", class_="company").text
+  except AttributeError:
+    company = None
+
+  try:
+    position = job.find("span", class_="position").text
+  except AttributeError:
+    position = None
+
+  try:
+    region = job.find("span", class_="region").text
+  except AttributeError:
+    region = None
   # none이 있으면 none이 출력되게 만드는 것. 혹시 빈 곳이 있을 까봐.
   # url = None
   # if url:
