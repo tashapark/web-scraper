@@ -63,3 +63,26 @@ for x in range(total_pages):
   scrape_page(url)
 
 print(len(all_jobs))
+
+
+
+
+# -------------우회로 추가하는 법
+
+keywords = ["flutter", "python", "golang"]
+
+#  우회법은 웹사이트마다 다를 수 있으나...
+# 검사 --> 네트워크 --> 처음 거 --> request header --> user-agent 값을 가져와서 아래처럼 만들어야 함. user라고 속이는 것임..ㅎ
+r = requests.get(
+    "https://remoteok.com/",
+    headers={
+        "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+    })
+
+# r = requests.get("https://remoteok.com/")
+# 이러면 block 당한 거 확인 됨.
+# print(r.status_code)
+#  따라서 위처럼 우회하게 해야 함.
+
+print(r.status_code)
