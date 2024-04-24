@@ -33,7 +33,6 @@ def scrape_page(url):
     except AttributeError:
       region = None
 
-# url에러 떠서.. 수정. none 경우 추가
     url = job.find("div", class_="tooltip--flag-logo").find_next("a")
     url = url.get("href") if url else None
 
@@ -47,17 +46,19 @@ def scrape_page(url):
     all_jobs.append(job_data)
 
 
-response = requests.get(
+def get_pages(url):
+  response = requests.get(url)
+  soup = BeautifulSoup(response.content, "html.parser")
+  return len(
+      soup.find("div", class_="pagination").find_all("span", class_="page"))
+
+
+total_pages = get_pages(
     "https://weworkremotely.com/remote-full-time-jobs?page=1")
-
-soup = BeautifulSoup(response.content, "html.parser")
-
-buttons = len(
-    soup.find("div", class_="pagination").find_all("span", class_="page"))
 
 # 몇 번 루프 돌릴지 제어가능
 #  index에 0이 없으니깐 제외하도록 x+1로
-for x in range(buttons):
+for x in range(total_pages):
   url = f"https://weworkremotely.com/remote-full-time-jobs?page={x+1}"
   scrape_page(url)
 
