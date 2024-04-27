@@ -86,3 +86,66 @@ r = requests.get(
 #  따라서 위처럼 우회하게 해야 함.
 
 print(r.status_code)
+from playwright.sync_api import sync_playwright
+# 코드에 대기 시간을 줌. 
+import time
+from bs4 import BeautifulSoup
+
+p = sync_playwright().start()
+
+# headless는 작동하지만 안보이는 것이라서, 열린 페이지가 보이게 하려면, 
+# headless=False를 넣어주면 됨. 
+browser = p.chromium.launch(headless=False)
+
+page = browser.new_page()
+
+page.goto("https://www.wanted.co.kr/jobsfeed")
+
+# 7초간 멈추면서 작동하는 것을 볼 수 있음. 
+time.sleep(5)
+
+# selector 쓰고 처음 class 명 가지고 오면 됨. 
+page.click("button.Aside_searchButton__Xhqq3")
+
+time.sleep(5)
+ 
+#  class 명은 개발자가 바꿀 수도 있기 때문에 placeholder를 사용하는 것이 더 안전한 선택일 수도 있음. 
+page.get_by_placeholder("검색어를 입력해 주세요.").fill("flutter")
+
+time.sleep(5)
+
+page.keyboard.down("Enter")
+
+time.sleep(5)
+
+# anchor의 a#id 이렇게 찾아주면 됨
+page.click("a#search_tab_position")
+
+for x in range(5):
+    time.sleep(5)
+    # end 키 없으면 걍 control + 화살표 위나 아래 누루면 스크롤이 내려감.
+    page.keyboard.down("End")
+
+content = print(page.content())
+
+# playwrit를 멈춤
+p.stop()
+
+
+soup = BeautifulSoup(content, "html.parser")
+
+
+
+# page.screenshot(path="screenshot.png")
+
+
+# def plus(a, b):
+#     return a + b
+
+# # 1, 2는 positional argument 위에서 해당 위치에 들어가니깐. 
+# #  만약에 plus(b=1, a= 2)로 바꾸면 keyword argument가 됨. 위치랑 상관없으니깐. 
+# #  즉 순서를 외우지 않아도 됨. keyword를 먼저 사용하면 나중에 positional 사용 못함. 
+# #  but, 처음을 positional로 시작하면, 뒤에 keyword 가능 plus(1, b=2) 
+# #  그리고 처음만 positional이면 거의 처음 argument 빼고는 선택사항인 경우가 많음. 
+# #  인자가 많을 때 주로 사용함. 
+# plus(1, 2)
