@@ -1,95 +1,8 @@
-import requests
-from bs4 import BeautifulSoup
-# beautifulsoup로 가져온 html 코드 내에서 필요한 . 거 찾을 수 있음.
-
-# pagination
-
-all_jobs = []
-
-
-def scrape_page(url):
-  print(f"Scrapping {url}...")
-  response = requests.get(url)
-  soup = BeautifulSoup(
-      response.content,
-      "html.parser",
-  )
-  jobs = soup.find("section", class_="jobs").find_all("li")[1:-1]
-
-  for job in jobs:
-    title = job.find("span", class_="title").text
-    try:
-      company = job.find("span", class_="company").text
-    except AttributeError:
-      company = None
-
-    try:
-      position = job.find("span", class_="position").text
-    except AttributeError:
-      position = None
-
-    try:
-      region = job.find("span", class_="region").text
-    except AttributeError:
-      region = None
-
-    url = job.find("div", class_="tooltip--flag-logo").find_next("a")
-    url = url.get("href") if url else None
-
-    job_data = {
-        "title": title,
-        "company": company,
-        "position": position,
-        "region": region,
-        "url": f"https://weworkremotely.com{url}",
-    }
-    all_jobs.append(job_data)
-
-
-def get_pages(url):
-  response = requests.get(url)
-  soup = BeautifulSoup(response.content, "html.parser")
-  return len(
-      soup.find("div", class_="pagination").find_all("span", class_="page"))
-
-
-total_pages = get_pages(
-    "https://weworkremotely.com/remote-full-time-jobs?page=1")
-
-# 몇 번 루프 돌릴지 제어가능
-#  index에 0이 없으니깐 제외하도록 x+1로
-for x in range(total_pages):
-  url = f"https://weworkremotely.com/remote-full-time-jobs?page={x+1}"
-  scrape_page(url)
-
-print(len(all_jobs))
-
-
-
-
-# -------------우회로 추가하는 법
-
-keywords = ["flutter", "python", "golang"]
-
-#  우회법은 웹사이트마다 다를 수 있으나...
-# 검사 --> 네트워크 --> 처음 거 --> request header --> user-agent 값을 가져와서 아래처럼 만들어야 함. user라고 속이는 것임..ㅎ
-r = requests.get(
-    "https://remoteok.com/",
-    headers={
-        "User-Agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-    })
-
-# r = requests.get("https://remoteok.com/")
-# 이러면 block 당한 거 확인 됨.
-# print(r.status_code)
-#  따라서 위처럼 우회하게 해야 함.
-
-print(r.status_code)
 from playwright.sync_api import sync_playwright
 # 코드에 대기 시간을 줌. 
 import time
 from bs4 import BeautifulSoup
+import csv
 
 p = sync_playwright().start()
 
@@ -99,34 +12,35 @@ browser = p.chromium.launch(headless=False)
 
 page = browser.new_page()
 
-page.goto("https://www.wanted.co.kr/jobsfeed")
+# 아래 코드는 어떻게 진행되는 지 보여주기 위함이고, 사실은 url만 있으면 끝임 
+page.goto("https://www.wanted.co.kr/search?query=flutter&tab=position")
 
-# 7초간 멈추면서 작동하는 것을 볼 수 있음. 
-time.sleep(5)
+# # 7초간 멈추면서 작동하는 것을 볼 수 있음. 
+# time.sleep(5)
 
-# selector 쓰고 처음 class 명 가지고 오면 됨. 
-page.click("button.Aside_searchButton__Xhqq3")
+# # selector 쓰고 처음 class 명 가지고 오면 됨. 
+# page.click("button.Aside_searchButton__Xhqq3")
 
-time.sleep(5)
+# time.sleep(5)
  
-#  class 명은 개발자가 바꿀 수도 있기 때문에 placeholder를 사용하는 것이 더 안전한 선택일 수도 있음. 
-page.get_by_placeholder("검색어를 입력해 주세요.").fill("flutter")
+# #  class 명은 개발자가 바꿀 수도 있기 때문에 placeholder를 사용하는 것이 더 안전한 선택일 수도 있음. 
+# page.get_by_placeholder("검색어를 입력해 주세요.").fill("flutter")
 
-time.sleep(5)
+# time.sleep(5)
 
-page.keyboard.down("Enter")
+# page.keyboard.down("Enter")
 
-time.sleep(5)
+# time.sleep(5)
 
-# anchor의 a#id 이렇게 찾아주면 됨
-page.click("a#search_tab_position")
+# # anchor의 a#id 이렇게 찾아주면 됨
+# page.click("a#search_tab_position")
 
 for x in range(5):
     time.sleep(5)
     # end 키 없으면 걍 control + 화살표 위나 아래 누루면 스크롤이 내려감.
     page.keyboard.down("End")
 
-content = print(page.content())
+content = page.content()
 
 # playwrit를 멈춤
 p.stop()
@@ -134,18 +48,44 @@ p.stop()
 
 soup = BeautifulSoup(content, "html.parser")
 
+jobs = soup.find_all("div", class_="JobCard_container__FqChn")
 
+jobs_db = []
 
-# page.screenshot(path="screenshot.png")
+for job in jobs:
+    # 속성 은 전부 다 [] 안에 들어갈 수 있음.
+    link = f"https://www.wanted.co.kr{job.find('a')['href']}"
+    title = job.find("strong", class_="JobCard_title__ddkwM").text
+    company_name = job.find("span", class_="JobCard_companyName__vZMqJ").text
+    reward = job.find("span", class_="JobCard_reward__sdyHn").text
+    job ={ 
+        "title":title,
+        "company_name":company_name,
+        "reward":reward,
+        "link":link
+    }
+    jobs_db.append(job)
 
+# print(jobs_db)
+# print(len(jobs_db))
 
-# def plus(a, b):
-#     return a + b
+# mode "r"이 디폴트고 읽기 전용이라서 w로 열어줌 
+file = open("jobs.csv", "w")
+# csv에 행을 추가하게 해줌
+writer = csv.writer(file)
+# writerow는 리스트만 보내고, 딕셔너리가 안됌.
+# 파이썬에 밸류나 키를 가져오게 하는 함수가 이미 있음. 
+# .values(), .keys()
+writer.writerow([
+    "Title","Company","Reward", "Link",
+    ])
 
-# # 1, 2는 positional argument 위에서 해당 위치에 들어가니깐. 
-# #  만약에 plus(b=1, a= 2)로 바꾸면 keyword argument가 됨. 위치랑 상관없으니깐. 
-# #  즉 순서를 외우지 않아도 됨. keyword를 먼저 사용하면 나중에 positional 사용 못함. 
-# #  but, 처음을 positional로 시작하면, 뒤에 keyword 가능 plus(1, b=2) 
-# #  그리고 처음만 positional이면 거의 처음 argument 빼고는 선택사항인 경우가 많음. 
-# #  인자가 많을 때 주로 사용함. 
-# plus(1, 2)
+for job in jobs_db:
+    writer.writerow(job.values())
+file.close()
+
+keywords = [
+    "flutter",
+    "nextjs",
+    "kotlin"
+]
