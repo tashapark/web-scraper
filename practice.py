@@ -1,15 +1,13 @@
-   
 
 
-with open("vocabulary.txt", 'a') as f:   
-    writing = True 
-    while writing:
-        eng_word =  input("영어 단어를 입력하세요: ")
-        kor_word =  input("한국어 뜻을 입력하세요: ")
-
-        if eng_word == "q" or kor_word == "q":
-            writing = False
-            print("Check out the 'vocabulary.txt'")
-        else:
-            f.write(f"{eng_word}: {kor_word}\n")
-    
+with open("vocabulary.txt", 'r') as f:   
+    vocabulary = [line.strip().split(": ") for line in f]
+writing = True 
+while writing:
+    for eng_word, kor_word in vocabulary:
+        answer = input(f"{kor_word}: ")
+        if eng_word == answer:
+            print("맞았습니다!") 
+        else: 
+            print(f"아쉽습니다. 정답은 {eng_word}입니다.")
+    writing = False
