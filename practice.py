@@ -1,6 +1,6 @@
 from random import randint
 
-
+# 로또 답 만들기 
 def generate_numbers(n):
     # 여기에 코드를 작성하세요
     numbers_com = []
@@ -20,7 +20,7 @@ def generate_numbers(n):
 
 #     return numbers
 
-
+# 정렬하고 보너스 점수 합해서 나타내기
 def draw_winning_numbers():
     # 여기에 코드를 작성하세요
     nums = generate_numbers(6)
@@ -34,5 +34,16 @@ def draw_winning_numbers():
 # def draw_winning_numbers(7):
 #     return sorted(draw_winning_numbers[:6] + draw_winning_numbers[6:])
 
+# 유저 입력 값과 매치되는 지 확인하기 
+def count_matching_numbers(numbers, winning_numbers):
+    # 여기에 코드를 작성하세요
+    count = 0 
+    for num in numbers:
+        if num in winning_numbers:
+            count += 1
+    return count        
+    
+
 # 테스트 코드
-print(draw_winning_numbers())
+print(count_matching_numbers([2, 7, 11, 14, 25, 40], [2, 11, 13, 14, 30, 35]))
+print(count_matching_numbers([2, 7, 11, 14, 25, 40], [14]))
