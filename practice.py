@@ -1,83 +1,56 @@
 from random import randint
 
-# 로또 답 만들기 
-def generate_numbers(n):
+
+def generate_numbers():
+    numbers = []
+
     # 여기에 코드를 작성하세요
-    numbers_com = []
-    # for문으로 랜덤으로 계속 숫자를 확인하게 
-    for number_com in range(n): 
-        numbers_com.append(randint(1, 45))
-    return numbers_com
+    while len(numbers) < 3:
+        nums = randint(1, 9)
+        # 중복 값 제거 
+        if nums not in numbers:
+            numbers.append(nums)
 
-# def generate_numbers(n):
-#     numbers = []
+    print("0과 9 사이의 서로 다른 숫자 3개를 랜덤한 순서로 뽑았습니다.\n")
+    return numbers
 
-# while로도 가능함.
-#     while len(numbers) < n:
-#         num = randint(1, 45)
-#         if num not in numbers:
-#             numbers.append(num)
-
-#     return numbers
-
-# 정렬하고 보너스 점수 합해서 나타내기
-def draw_winning_numbers():
-    # 여기에 코드를 작성하세요
-    nums = generate_numbers(6)
-    bonus_num = generate_numbers(1)[0]
-    nums_sorted = sorted(nums)
-    nums_sorted.append(bonus_num)
-    return nums_sorted
-
-#  훨씬 간단해짐.. 슬라이싱을 항상 머리 속에 넣고 있쟈....
-# sort는 리스트 값을 반환하지 않고, sorted가 반환함.. none지옥에 빠지지 말자...
-# def draw_winning_numbers(7):
-#     return sorted(draw_winning_numbers[:6] + draw_winning_numbers[6:])
-
-# 유저 입력 값과 매치되는 지 확인하기 
-def count_matching_numbers(numbers, winning_numbers):
-    count = 0 
-    for num in numbers:
-        if num in winning_numbers:
-            count += 1
-    return count        
-    
-# 번호 확인해서 당첨금 제시하기 
-def check(numbers, winning_numbers):
-    # 여기에 코드를 작성하세요
-    if count_matching_numbers(numbers, winning_numbers) == 6:
-        if numbers[0:] == winning_numbers[:6]:
-            return 10000000000
-        else:
-            return 500000000
-    elif count_matching_numbers(numbers, winning_numbers) == 5:
-        return 1000000
-    elif count_matching_numbers(numbers, winning_numbers) == 4:
-        return 50000
-    elif count_matching_numbers(numbers, winning_numbers) == 3:
-        return 5000
-    else:
-        print("take a rain check :(")
-        
-        
-# 이렇게 변수명 지정하면 중복 길이를 줄일 수 있음. 
-# def check(numbers, winning_numbers):
-#     count = count_matching_numbers(numbers, winning_numbers[:6])
-#     bonus_count = count_matching_numbers(numbers, winning_numbers[6:])
-
-#     if count == 6:
-#         return 1000000000
-#     elif count == 5 and bonus_count == 1:
-#         return 50000000
-#     elif count == 5:
-#         return 1000000
-#     elif count == 4:
-#         return 50000
-#     elif count == 3:
-#         return 5000
-#     else:
-#         return 0
 
 # 테스트 코드
-print(check([2, 4, 11, 14, 25, 40], [4, 12, 14, 28, 40, 41, 6]))
-print(check([2, 4, 11, 14, 25, 40], [2, 4, 10, 11, 14, 40, 25]))
+print(generate_numbers())
+
+def take_guess():
+    print("숫자 3개를 하나씩 차례대로 입력하세요.")
+    
+    new_guess = []
+    i = 1
+    while i <= 3:
+        num_guess = int(input(f"{i}번째 숫자를 입력하세요: "))
+        if num_guess < 10 and num_guess > 0:
+            if num_guess in new_guess:
+                print("중복되는 숫자입니다. 다시 입력하세요.")
+            # 다음 숫자로 안 넘어가고 다시 현재 숫자 입력 
+                continue 
+            new_guess.append(num_guess)
+            i += 1
+        else: 
+            print("범위를 벗어나는 숫자입니다. 다시 입력하세요")
+            continue
+
+# 이게 훨씬 더 간단함.
+    # while len(new_guess) < 3:
+    #     new_num = int(input("{}번째 숫자를 입력하세요: ".format(len(new_guess) + 1)))
+        
+    #     if new_num < 0 or new_num > 9:
+    #         print("범위를 벗어나는 숫자입니다. 다시 입력하세요.")
+    #     elif new_num in new_guess:
+    #         print("중복되는 숫자입니다. 다시 입력하세요.")
+    #     else:
+    #         new_guess.append(new_num)
+
+    return new_guess
+    
+
+
+    
+# 테스트 코드
+print(take_guess())
