@@ -1,35 +1,26 @@
-   
-import random
-
-voca_dicts ={}
-
-with open("vocabulary.txt", 'r') as f:   
-    for line in f:
-        data = line.strip().split(": ")
-        if len(data) < 2:
-            continue
-        eng_word, kor_word = data[0], data[1]
-        voca_dicts[eng_word] = kor_word
+from random import randint
 
 
-writing = True 
-while writing: 
-        # 섞을 수 있게 리스트로 
-        voca_keys = list(voca_dicts.keys())
-        random.shuffle(voca_keys)
-        # 이것도 방법임. 인덱스에 랜덤 수 할당. 
-        # index = random.randint(0, len(voca_keys) - 1)
-        # english_word = voca_keys[index]
+def generate_numbers(n):
+    # 여기에 코드를 작성하세요
+    numbers_com = []
+    # for문으로 랜덤으로 계속 숫자를 확인하게 
+    for number_com in range(n): 
+        numbers_com.append(randint(1, 45))
+    return numbers_com
 
-        for eng_word in voca_keys:
-            kor_word = voca_dicts[eng_word]
-            answer = input(f"{kor_word}: ")
-            if answer == "q":
-                writing = False
-                break
-            elif eng_word == answer:
-                print("맞았습니다!") 
-            else: 
-                print(f"아쉽습니다. 정답은 {eng_word}입니다.")
-    
-           
+# def generate_numbers(n):
+#     numbers = []
+
+# while로도 가능함.
+#     while len(numbers) < n:
+#         num = randint(1, 45)
+#         if num not in numbers:
+#             numbers.append(num)
+
+#     return numbers
+
+
+
+# 테스트 코드
+print(generate_numbers(6))
