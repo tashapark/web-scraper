@@ -3,8 +3,6 @@ from random import randint
 
 def generate_numbers():
     numbers = []
-
-    # 여기에 코드를 작성하세요
     while len(numbers) < 3:
         nums = randint(1, 9)
         # 중복 값 제거 
@@ -14,9 +12,6 @@ def generate_numbers():
     print("0과 9 사이의 서로 다른 숫자 3개를 랜덤한 순서로 뽑았습니다.\n")
     return numbers
 
-
-# 테스트 코드
-print(generate_numbers())
 
 def take_guess():
     print("숫자 3개를 하나씩 차례대로 입력하세요.")
@@ -67,15 +62,30 @@ def get_score(guesses, solution):
     return strike_count, ball_count
 
 
-# 테스트 코드
-s_1, b_1 = get_score([2, 7, 4], [2, 4, 7])
-print(s_1, b_1)
+# 여기서부터 게임 시작!
+ANSWER = generate_numbers()
+tries = 0
 
-s_2, b_2 = get_score([7, 2, 4], [2, 4, 7])
-print(s_2, b_2)
+# 여기에 코드를 작성하세요
+while tries >= 0:
+    guesses = take_guess()
+    solution = ANSWER
+    S, B = get_score(guesses, solution)
+    print(f"{S}S", f"{B}B")
+    if S != 3:
+        tries += 1
+    else:
+        break
 
-s_3, b_3 = get_score([0, 4, 7], [2, 4, 7])
-print(s_3, b_3)
+# argument 이름은 마음대로 해도 되니까 굳이.. solution으로 바꿔줄 필요 없고,
+# if도 마지막에 1개만 쓰면 됨!!
+# while True:
+#     user_guess = take_guess()
+#     s, b = get_score(user_guess, ANSWER)
 
-s_4, b_4 = get_score([2, 4, 7], [2, 4, 7])
-print(s_4, b_4)
+#     print("{}S {}B\n".format(s, b))
+#     tries += 1
+
+#     if s == 3:
+#         break
+print("축하합니다. {}번 만에 숫자 3개의 값과 위치를 모두 맞히셨습니다.".format(tries))
